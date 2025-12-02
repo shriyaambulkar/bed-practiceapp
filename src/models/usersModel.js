@@ -4,24 +4,56 @@
 const pool = require('../services/db');
 
 // ##############################################################
-// DEFINE SELECT TREES BY USER ID
+// DEFINE INSERT OPERATION FOR USER
 // ##############################################################
-module.exports.selectTreesByUserId = (data, callback) => {
-    const SQLSTATEMENT = `
-    SELECT * FROM Tree WHERE user_id = ?;`;
-    const VALUES = [data.userId];
-    
-    pool.query(SQLSTATEMENT, VALUES, callback);
+module.exports.insertUser = (data, callback) => {
+  const SQLSTATEMENT = `
+  INSERT INTO User (name, email, max_loans) 
+  VALUES (?, ?, ?);`;
+  const VALUES = [data.name, data.email, data.max_loans];
+
+  pool.query(SQLSTATEMENT, VALUES, callback);
 };
 
 // ##############################################################
-// DEFINE WATER TREE BY USER ID
+// DEFINE SELECT ALL OPERATIONS FOR USER
 // ##############################################################
-module.exports.waterTreeByUserId = (data, callback) => {
-    const SQLSTATEMENT = `
-    UPDATE Tree SET watered_on = NOW() WHERE user_id = ? AND id = ?;`;
-    const VALUES = [data.userId, data.treeId];
-    
-    pool.query(SQLSTATEMENT, VALUES, callback);
+module.exports.selectAll = (callback) => {
+  const SQLSTATEMENT = `
+  SELECT * FROM User;`;
+
+  pool.query(SQLSTATEMENT, callback);
 };
 
+// ##############################################################
+// DEFINE SELECT BY ID OPERATIONS FOR USER
+// ##############################################################
+module.exports.selectUserById = (data, callback) => {
+  const SQLSTATEMENT = `
+  SELECT * FROM User WHERE id = ?;`;
+  const VALUES = [data.id];
+
+  pool.query(SQLSTATEMENT, VALUES, callback);
+};
+
+// ##############################################################
+// DEFINE UPDATE OPERATIONS FOR USER
+// ##############################################################
+module.exports.updateUserById = (data, callback) => {
+  const SQLSTATEMENT = `
+  UPDATE User SET name = ?, email = ?, max_loans = ? WHERE id = ?;`;
+  const VALUES = [data.name, data.email, data.max_loans, data.id];
+
+  pool.query(SQLSTATEMENT, VALUES, callback);
+};
+
+// ##############################################################
+// DEFINE DELETE OPERATIONS FOR USER
+// ##############################################################
+module.exports.deleteUserById = (data, callback) => {
+  const SQLSTATEMENT = `
+  DELETE FROM User WHERE id = ?;`;
+  const VALUES = [data.id];
+
+  pool.query(SQLSTATEMENT, VALUES, callback);
+};

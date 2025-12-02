@@ -1,11 +1,8 @@
 // ##############################################################
 // REQUIRE MODULES
 // ##############################################################
-const express = require('express');
-
-const usersRoutes = require('./usersRoutes');
-const booksRoutes = require('./booksRoutes');
-const loansRoutes = require('./loansRoutes');
+const express = require("express");
+const loansController = require("../controllers/loansController");
 
 // ##############################################################
 // CREATE ROUTER
@@ -15,9 +12,7 @@ const router = express.Router();
 // ##############################################################
 // DEFINE ROUTES
 // ##############################################################
-router.use("/users", usersRoutes);
-router.use("/books", booksRoutes);
-router.use("/loans", loansRoutes);
+
 
 // ##############################################################
 // EXPORT ROUTER

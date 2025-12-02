@@ -13,13 +13,13 @@
     "nodemon": "^2.0.22",
     "supertest": "^6.3.3"
   },
-  "name": "mock-test",
+  "name": "bed-practiceapp",
   "version": "1.0.0",
   "main": "index.js",
   "directories": {
     "test": "tests"
   },
-  "author": "Siah Peih Wee",
+  "author": "Lum Hong Ye",
   "license": "ISC",
   "description": ""
 }

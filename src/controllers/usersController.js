@@ -2,124 +2,147 @@
 // REQUIRE MODULES
 // ##############################################################
 const model = require("../models/usersModel");
-const treeModel = require("../models/treesModel");
 
 // ##############################################################
-// DEFINE CONTROLLER FUNCTION FOR READ TREE BY USERID
+// DEFINE CONTROLLER FUNCTION FOR CREATE USER
 // ##############################################################
-module.exports.readTreeByUserId = (req, res, next) => {
-    const data = {
-        userId: req.params.userId
+module.exports.createUser = (req, res, next) => {
+  const data = {
+    name: req.body.name,
+    email: req.body.email,
+    max_loans: req.body.max_loans
+  };
+
+  if (!data.name || !data.email || data.max_loans === undefined) {
+    res.status(400).json({
+      message: "Missing required data."
+    });
+    return;
+  }
+
+  const callback = (error, results, fields) => {
+    if (error) {
+      console.error("Error createUser:", error);
+      res.status(500).json(error);
+    } else {
+      res.status(201).json({
+        message: "User created successfully.",
+        userId: results.insertId
+      });
     }
-    const callback = (error, results, fields) => {
-        if (error) {
-        console.error("Error getTreeByUserId:", error);
-        res.status(500).json(error);
-        } else {
-        if(results.length === 0) {
-            res.status(404).json({
-            message: "No trees found."
-            });
-            return;
-        }
-    
-        res.status(200).json(results);
-        }
-    };
-    
-    model.selectTreesByUserId(data, callback);
-}
+  };
+
+  model.insertUser(data, callback);
+};
 
 // ##############################################################
-// DEFINE CONTROLLER FUNCTION FOR WATER TREE BY USERID
+// DEFINE CONTROLLER FUNCTION FOR READ ALL USERS
 // ##############################################################
-module.exports.waterTreeByUserId = (req, res, next) => {
-    const data = {
-        userId: req.params.userId,
-        treeId: req.params.treeId
+module.exports.readAllUsers = (req, res, next) => {
+  const callback = (error, results, fields) => {
+    if (error) {
+      console.error("Error readAllUsers:", error);
+      res.status(500).json(error);
+    } else {
+      if (results.length === 0) {
+        res.status(404).json({
+          message: "No users found."
+        });
+        return;
+      }
+
+      res.status(200).json(results);
     }
-    const callback = (error, results, fields) => {
-        if (error) {
-        console.error("Error waterTreeByUserId:", error);
-        res.status(500).json(error);
-        } else {
+  };
+
+  model.selectAll(callback);
+};
+
+// ##############################################################
+// DEFINE CONTROLLER FUNCTION FOR READ USER BY ID
+// ##############################################################
+module.exports.readUserById = (req, res, next) => {
+  const data = {
+    id: req.params.id
+  };
+
+  const callback = (error, results, fields) => {
+    if (error) {
+      console.error("Error readUserById:", error);
+      res.status(500).json(error);
+    } else {
+      if (results.length === 0) {
+        res.status(404).json({
+          message: "User not found."
+        });
+        return;
+      }
+
+      res.status(200).json(results[0]);
+    }
+  };
+
+  model.selectUserById(data, callback);
+};
+
+// ##############################################################
+// DEFINE CONTROLLER FUNCTION FOR UPDATE USER BY ID
+// ##############################################################
+module.exports.updateUserById = (req, res, next) => {
+  const data = {
+    id: req.params.id,
+    name: req.body.name,
+    email: req.body.email,
+    max_loans: req.body.max_loans
+  };
+
+  if (!data.name || !data.email || data.max_loans === undefined) {
+    res.status(400).json({
+      message: "Missing required data."
+    });
+    return;
+  }
+
+  const callback = (error, results, fields) => {
+    if (error) {
+      console.error("Error updateUserById:", error);
+      res.status(500).json(error);
+    } else {
+      if (results.affectedRows === 0) {
+        res.status(404).json({
+          message: "User not found."
+        });
+      } else {
         res.status(204).send();
-        }
-    };
-    
-    model.waterTreeByUserId(data, callback);
-}
-
-// ##############################################################
-// DEFINE MIDDLEWARE FUNCTION FOR CHECK TREE OWNERSHIP
-// ##############################################################
-module.exports.checkTreeOwnership = (req, res, next) => {
-    const data = {
-        userId: parseInt(req.params.userId),
-        treeId: req.params.treeId,
-        id: req.params.treeId
+      }
     }
-    const callback = (error, results, fields) => {
-        if (error) {
-        console.error("Error checkTreeOwnership:", error);
-        res.status(500).json(error);
-        } else {
+  };
 
-        // console.log(results[0].user_id);    
-        // console.log(data);    
-        
-        if(results.length === 0) {
-            res.status(404).json({
-            message: "Tree not found."
-            });
-            return;
-        }
-        else if(results[0].user_id != data.userId) {
-            res.status(403).json({
-            message: "Tree does not belong to user."
-            });
-            return;
-        }
-        next();
-        }
-    };
-    
-    treeModel.selectTreeById(data, callback);
-}
+  model.updateUserById(data, callback);
+};
 
 // ##############################################################
-// DEFINE CONTROLLER FUNCTION FOR GET AVERAGE AGE OF 
-// TREES OWNED BY USER
+// DEFINE CONTROLLER FUNCTION FOR DELETE USER BY ID
 // ##############################################################
-module.exports.getAverageAgeOfTreesOwnedByUser = (req, res, next) => {
-    const data = {
-        userId: req.params.userId
+module.exports.deleteUserById = (req, res, next) => {
+  const data = {
+    id: req.params.id
+  };
+
+  const callback = (error, results, fields) => {
+    if (error) {
+      console.error("Error deleteUserById:", error);
+      res.status(500).json(error);
+    } else {
+      if (results.affectedRows === 0) {
+        res.status(404).json({
+          message: "User not found."
+        });
+      } else {
+        res.status(204).send();
+      }
     }
-    const callback = (error, results, fields) => {
-        if (error) {
-            console.error("Error getAverageAgeOfTreesOwnedByUser:", error);
-            res.status(500).json(error);
-        } else {
-            if(results.length === 0) {
-                res.status(404).json({
-                    message: "No trees found."
-                });
-                return;
-            }
+  };
 
-            let totalAge = 0;
-            results.forEach((tree) => {
-                totalAge += tree.age;
-            });
-
-            const averageAge = totalAge / results.length;
-
-            res.status(200).json({
-                averageAge: averageAge,
-                numberOfTrees: results.length
-            });
-        }
-    };
-    
-    model.selectTreesByUserId(data, callback);
-}
+  model.deleteUserById(data, callback);
+};
