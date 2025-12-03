@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const setting = {
     connectionLimit : 10, //set limit to 10 connection
     host     : 'localhost',
+    port: 3307,
     user     : 'root',
     password : '',
     database : 'library',
